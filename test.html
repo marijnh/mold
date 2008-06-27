@@ -4,9 +4,9 @@
     <script src="mold.js"></script>
     <script>
       window.onload = function() {
-        var test = "<p><?d console.log(this);?><?t 5 + 5?> ... \"<?if input == 5?>bye<?/if?>\"</p>\n<ul><?for x [5, \n6, 7]?><li><?event click alert(x);?><?t x?></li><?/for?></ul>";
-        var mold = bake(test);
-        cast(document.getElementById('target'), mold, 5);
+        var test = "<p><?r console.log(this);?><?label goo?><?t 5 + 5?> ... \"<?if input == 5?>bye<?/if?>\"</p>\n<ul><?for x [5, \n6, 7]?><li><?event click alert(x);?><?l li?><?t x?></li><?/for?></ul>";
+        window.mold = bake(test);
+        window.goo = cast(document.getElementById('target'), mold, 5);
       };
     </script>
     (test)

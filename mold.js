@@ -94,11 +94,25 @@ function addSnippet(f) {
     return snippets.length - 1;
   }
 }
+var labels;
+function setLabel(name, inArray) {
+  return function() {
+    if (!labels) labels = {};
+    if (inArray) (labels[name] || (labels[name] = [])).push(this);
+    else labels[name] = this;
+  };
+}
 
 function bake(template) {
   var parts = splitTemplate(template);
   var func = ["function(input){\nvar __out = [];\n"];
   var stack = [];
+
+  function inLoop() {
+    for (var i = 0; i < stack.length; i++)
+      if (stack[i] == "for") return true;
+    return false;
+  }
 
   while (parts.length) {
     var cur = parts.shift();
@@ -155,6 +169,10 @@ function bake(template) {
     case "run": case "r":
       func.push("__out.push(\"<var class=\\\"__mold \" + addSnippet(function(){" + cur.args + "}) + \"\\\"></var>\");\n");
       break;
+    case "label": case "l":
+      func.push("__out.push(\"<var class=\\\"__mold \" + addSnippet(setLabel(\"" + cur.args + "\", " + inLoop() +
+                ")) + \"\\\"></var>\");\n");
+      break;
 
     default:
       throw new Error("Unrecognised template command: '" + cur.command + "'.");
@@ -167,17 +185,21 @@ function bake(template) {
 }
 
 function cast(target, mold, data) {
-  snippets = [], snippet = 0;
+  snippets = [], snippet = 0, labels = null;
   target.innerHTML = mold(data);
-  var varTags = target.getElementsByTagName("VAR"), toDelete = [];
-  for (var i = 0; i < varTags.length; i++) {
-    var varTag = varTags[i], match = varTag.className.match(/^__mold (\d+)$/);
+  var varTags = target.getElementsByTagName("VAR"), array = [];
+  // Copy tags into array -- FF modifies the varTags collection when you delete nodes in it.
+  for (var i = 0; i < varTags.length; i++)
+    array.push(varTags[i]);
+  for (var i = 0; i < array.length; i++) {
+    var varTag = array[i], match = varTag.className.match(/^__mold (\d+)$/);
     if (match) {
-      toDelete.push(varTag);
       snippets[match[1]].call(varTag.previousSibling || varTag.parentNode);
+      removeNode(varTag);
     }
   }
-  for (var i = 0; i < toDelete.length; i++)
-    removeNode(toDelete[i]);
-  snippets = null;
+
+  var result = labels;
+  labels = snippets = null;
+  return result;
 }
