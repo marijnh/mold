@@ -75,10 +75,9 @@ function splitTemplate(template) {
     }
     else {
       addString(template.slice(0, open));
-      template = template.slice(open + 2);
-      var close = template.search(/\?[\]>]/);
+      var close = template.indexOf("?" + (template.charAt(open) == "<" ? ">" : "]"), open + 2);
       if (close == -1) throw new Error("'<?' without matching '?>' in template.");
-      var content = template.slice(0, close), match = content.match(/^([\w\/]+)(?: ((?:\n|.)+))?$/);
+      var content = template.slice(open + 2, close), match = content.match(/^([\w\/]+)(?: ((?:\n|.)+))?$/);
       if (!match) throw new Error("Template command ('" + content + "') does not follow 'command [arguments]' format.");
       parts.push({command: match[1], args: match[2]});
       template = template.slice(close + 2);
