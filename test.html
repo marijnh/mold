@@ -4,7 +4,7 @@
     <script src="mold.js"></script>
     <script>
       window.onload = function() {
-        var test = "<p><?r this.style.color = \"blue\";?><?label goo?><?t 5 + 5?> ... \"<?if input == 5?>bye<?/if?>\"</p>\n<ul><?for x [5, \n6, 7]?><li><?event click alert(x);?><?l li?><?t x?></li><?/for?></ul>";
+        var test = "<p><?r this.style.color = \"blue\";?><?label goo?><?t 5 + 5?> ... \"<?if $arg == 5?>bye<?/if?>\"</p>\n<ul><?for x [5, \n6, 7]?><li><?event click alert(x);?><?l li?><?t x?></li><?/for?></ul>";
         window.mold = Mold.bake(test);
         window.goo = Mold.cast(document.getElementById('target'), mold, 5);
       };
