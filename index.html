@@ -1,6 +1,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <title>Mold user manual</title>
+    <title>Mold</title>
     <link rel="stylesheet" type="text/css" href="css/docs.css"/>
     <style type="text/css">
       body {
@@ -10,8 +10,8 @@
         color: black;
       }
 
-      h1 { font-size: 22pt; border-bottom: 3px solid #A0A; }
-      h2 { font-size: 14pt; border-bottom: 1px solid #A0A; }
+      h1 { font-size: 22pt; border-bottom: 3px solid #A19; }
+      h2 { font-size: 14pt; border-bottom: 1px solid #A19; }
 
       code {
         font-family: courier, monospace;
@@ -30,7 +30,7 @@
   </head>
   <body>
 
-    <h1>Mold user manual</h1>
+    <h1>Mold</h1>
 
     <p>Mold is a client-side JavaScript-based templating library. It
     compiles ('bakes') plain-text templates to functions that map
@@ -40,9 +40,9 @@
 
     <p>The majority of Mold's operators are concerned with plain text,
     but a few of them are HTML-specific, in that they refer to the
-    nodes created by the template. Some magic is involved with this
-    (see section <a href="#implementation">'Implementation'</a>), but
-    <a href="#cast"><code>Mold.cast</code></a> encapsulates that
+    nodes created by the template. Some magic is involved in this (see
+    section <a href="#implementation">'Implementation'</a>), but <a
+    href="#cast"><code>Mold.cast</code></a> encapsulates that
     magic.</p>
 
     <p>In a typical use scenario, the web application somehow gets
@@ -82,7 +82,32 @@
 
     <h2 id="example">Example template</h2>
 
-    <p>[TODO]</p>
+    <p>A template to build a simple multiple choice widget, for
+    example, might look like this (refer to the explanation below if
+    something confuses you):</p>
+
+    <pre class="code">
+&lt;div class="choice"&gt;
+  &lt;h2&gt;Choose one:&lt;/h2&gt;
+  &lt;ol class="option"&gt;
+    &lt;?for choice $arg?&gt;
+      &lt;li&gt;
+        &lt;?event click handleChoice(choice)?&gt;
+        &lt;?if typeof choice == "string"?&gt;
+          &lt;p&gt;&lt;?text choice?&gt;&lt;/p&gt;
+        &lt;?else?&gt;
+          &lt;?html choice.render()?&gt;
+        &lt;?/if?&gt;
+      &lt;/li&gt;
+    &lt;?/for?&gt;
+  &lt;/ol&gt;
+&lt;/div&gt;</pre>
+
+    <p>This loops over an array of choices, building up a
+    representation of each choice, with a special case for choices
+    that are simple strings. Note that <code>choice.render</code> can
+    also be a mold function. Templates can easily be composed like
+    this.</p>
 
     <h2 id="useage">Useage</h2>
 
@@ -241,7 +266,13 @@
     '<code>on</code>' prefix), and <code>func</code> is a function of
     one argument (the event object).</p>
 
-    <p>[TODO: prototype, dojo examples]</p>
+    <p>When using <a href="http://www.prototypejs.org">Prototype</a>,
+    for example, you might do this:</p>
+
+    <pre class="code">
+Mold.attachEvent = function(node, eventName, func) {
+  node.observe(eventName, func);
+};</pre>
 
     <p>There is also <code>Mold.escapeHTML</code>, which HTML-escapes
     the characters '<code>&lt;&gt;&quot;&amp;</code>'. This is not
@@ -250,7 +281,39 @@
 
     <h2 id="implementation">Implementation</h2>
 
-    <p>[TODO To be written.]</p>
+    <p>What <a href="#bake"><code>Mold.bake</code></a> does is
+    decompose the template into instructions and pieces of plain text,
+    and then build a (textual) JavaScript function from these pieces,
+    and use <code>eval</code> to turn it into a real function. This
+    way, loops and conditionals are straightforwardly borrowed from
+    the underlying interpreter, and a lot of work must only be done
+    once.</p>
+
+    <p>The <code>event</code>, <code>run</code>, and
+    <code>label</code> instructions need information about the nodes
+    in the resulting DOM tree. Rather than implement some kind of HTML
+    parser, Mold delays their execution until after the text has been
+    parsed by the browser. At expansion time their code is stored in a
+    (numbered) function, which closes over the variables that are
+    active in the template. At the place where they occur, a dummy tag
+    (I used empty <code>var</code> tags with a special class) in
+    inserted. Then, after using <code>innerHTML</code> to transform
+    the text into a DOM tree, <a
+    href="#cast"><code>Mold.cast</code></a> searches for such tags,
+    removes them, and runs the code on the relevant nodes. (If you
+    directly call mold functions that use these instructions, you will
+    see the dummy tags.)</p>
+
+    <p>Whether a system like this &#x2015; intricately connected to
+    the dodgy <code>innerHTML</code> property &#x2015; is the most
+    ideal is debatable. My initial intention was to use XHTML
+    templates with a bunch of special tags, a kind of XSLT for
+    JavaScript/JSON data, and use DOM manipulation for all the
+    transformations. But, while <code>innerHTML</code> is implemented
+    pretty well in most browsers, stuff like <code>cloneNode</code>
+    and transforming XML trees to HTML is slightly flaky in a lot of
+    them (and <em>extremely</em> flaky in one particular browser...
+    you guess which).</p>
 
   </body>
 </html>
