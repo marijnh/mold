@@ -44,19 +44,3 @@ function forEach(array, f) {
   for (var i = 0; i < array.length; i++)
     f(array[i]);
 }
-
-function removeNode(node) {
-  node.parentNode.removeChild(node);
-}
-
-(function(){
-  var HTMLspecial = {"<": "&lt;", ">": "&gt;", "&": "&amp;", "\"": "&quot;"};
-  var JSspecial = {"\"": "\\\"", "\\": "\\\\", "\f": "\\f", "\b": "\\b",
-                   "\n": "\\n", "\t": "\\t", "\r": "\\r", "\v": "\\v"};
-  window.escapeHTML = function escapeHTML(text) {
-    return String(text).replace(/[<>&\"]/g, function(ch) {return HTMLspecial[ch];});
-  }
-  window.escapeString = function escapeString(text) {
-    return String(text).replace(/[\"\\\f\b\n\t\r\v]/g, function(ch) {return JSspecial[ch];});
-  }
-})();
