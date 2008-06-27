@@ -64,6 +64,16 @@ var Mold = {};
     return String(text).replace(/[\"\\\f\b\n\t\r\v]/g, function(ch) {return JSspecial[ch];});
   }
 
+  Mold.attachEvent = null;
+  function _attachEvent(node, eventName, func) {
+    if (Mold.attachEvent)
+      Mold.attachEvent(node, eventName, func);
+    else if (node.addEventListener)
+      node.addEventListener(eventName, func, false);
+    else
+      node.attachEvent("on" + eventName, function(event){func(event || window.event);});
+  }
+
   Mold.forEach = function forEach(array, f) {
     for (var i = 0; i < array.length; i++)
       f(array[i]);
@@ -123,7 +133,7 @@ var Mold = {};
       case "event":
         var match = cur.args.match(/^(\w+) ((?:\n|.)+)$/);
         if (!match) throw new Error("Malformed arguments to 'event' form in template -- expected event name followed by handler body.");
-        func.push("__out.push(\"<var class=\\\"__mold \" + Mold.addSnippet(function(){addEventHandler(this, \"" + 
+        func.push("__out.push(\"<var class=\\\"__mold \" + Mold.addSnippet(function(){_attachEvent(this, \"" + 
                   match[1] + "\", function(event) {\n" + match[2] + "\n});}) + \"\\\"></var>\");\n");
         break;
       case "run": case "r":
