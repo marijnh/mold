@@ -68,10 +68,10 @@
     (small) script file: <a href="mold.js"><code>mold.js</code></a>.
     The library is licenced under a BSD-style <a
     href="LICENSE">license</a>. For those wanting to work on it, the
-    <a href="http://darcs.net">Darcs</a> repository can be gotten from
-    <code>http://marijn.haverbeke.nl/mold</code>. The <a
+    <a href="http://darcs.net">Darcs</a> <a
     href="http://marijn.haverbeke.nl/darcsweb.cgi?r=mold">repository</a>
-    can be viewed online with Darcsweb.</p>
+    can be gotten from
+    <code>http://marijn.haverbeke.nl/mold</code>.</p>
 
     <p>I am not currently doing releases, but once the library becomes
     more mature and there are any actual users, I will.</p>
@@ -96,7 +96,7 @@
       &lt;li&gt;
         &lt;?event click handleChoice(choice)?&gt;
         &lt;?if typeof choice == "string"?&gt;
-          &lt;p&gt;&lt;?text choice?&gt;&lt;/p&gt;
+          &lt;strong&gt;&lt;?text choice?&gt;&lt;/strong&gt;
         &lt;?else?&gt;
           &lt;?html choice.render()?&gt;
         &lt;?/if?&gt;
@@ -129,9 +129,9 @@
     '<code>?&gt;</code>' are used around all instructions, as in PHP.
     Contrary to PHP, though, Mold uses several different processing
     instructions which serve different roles. After the
-    '<code>&lt;?</code>', an instruction should follow (see below). In
-    cases where you don't want to use angle brackets (inside
-    attributes in a valid XML document, for example),
+    '<code>&lt;?</code>', an instruction name should follow (see
+    below). In cases where you don't want to use angle brackets
+    (inside attributes in a valid XML document, for example),
     '<code>[?</code>' and '<code>?]</code>' can be used as
     equivalents.</p>
 
@@ -236,8 +236,8 @@
     failures (see <a href="#implementation">'Implementation'</a>), but
     could, if you really want to, be used to make the library do
     things it is not designed for &#x2015; you could create your own
-    loops, for example, with two <code>do</code> instructions, one
-    opening the loop and one closing it.</p>
+    PHP-style loops, for example, with two <code>do</code>
+    instructions, one opening the loop and one closing it.</p>
 
     <p id="cast">To build HTML from a compiled template, the
     <code>Mold.cast</code> function is used. It takes three arguments
