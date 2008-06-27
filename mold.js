@@ -60,7 +60,7 @@ var Mold = {};
   }
   var JSspecial = {"\"": "\\\"", "\\": "\\\\", "\f": "\\f", "\b": "\\b",
                    "\n": "\\n", "\t": "\\t", "\r": "\\r", "\v": "\\v"};
-  Mold.escapeString = function escapeString(text) {
+  function escapeString(text) {
     return String(text).replace(/[\"\\\f\b\n\t\r\v]/g, function(ch) {return JSspecial[ch];});
   }
 
@@ -87,7 +87,7 @@ var Mold = {};
     while (parts.length) {
       var cur = parts.shift();
       if (typeof cur == "string") {
-        func.push("__out.push(\"" + Mold.escapeString(cur) + "\");\n");
+        func.push("__out.push(\"" + escapeString(cur) + "\");\n");
         continue;
       }
       switch (cur.command) {
@@ -140,7 +140,7 @@ var Mold = {};
         func.push("__out.push(\"<var class=\\\"__mold \" + Mold.addSnippet(function(){" + cur.args + "}) + \"\\\"></var>\");\n");
         break;
       case "label": case "l":
-        func.push("__out.push(\"<var class=\\\"__mold \" + Mold.addSnippet(Mold.setLabel(\"" + Mold.escapeString(cur.args) +
+        func.push("__out.push(\"<var class=\\\"__mold \" + Mold.addSnippet(Mold.setLabel(\"" + escapeString(cur.args) +
                   "\")) + \"\\\"></var>\");\n");
         break;
 
