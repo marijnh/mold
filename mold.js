@@ -18,7 +18,7 @@ var Mold = {};
         addString(template.slice(0, open));
         var close = template.indexOf("?" + (template.charAt(open) == "<" ? ">" : "]"), open + 2);
         if (close == -1) throw new Error("'<?' without matching '?>' in template.");
-        var content = template.slice(open + 2, close), match = content.match(/^([\w\/]+)(?: ((?:\n|.)+))?$/);
+        var content = template.slice(open + 2, close), match = content.match(/^([\w\/]+)(?:\s+((?:\n|.)+))?$/);
         if (!match) throw new Error("Template command ('" + content + "') does not follow 'command [arguments]' format.");
         parts.push({command: match[1], args: match[2]});
         template = template.slice(close + 2);
