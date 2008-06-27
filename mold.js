@@ -155,11 +155,11 @@ var Mold = {};
     return window.eval(func.join(""))[0];
   };
 
-  Mold.cast = function cast(target, mold, data) {
+  Mold.cast = function cast(target, mold, arg) {
     if (casting) throw new Error("Mold.cast must not be called recursively.");
 
     snippets = [], snippet = 0, labels = null, forDepth = 0, casting = true;
-    target.innerHTML = mold(data);
+    target.innerHTML = mold(arg);
     var varTags = target.getElementsByTagName("VAR"), array = [];
     // Copy tags into array -- FF modifies the varTags collection when you delete nodes in it.
     for (var i = 0; i < varTags.length; i++)
@@ -177,4 +177,12 @@ var Mold = {};
     casting = false;
     return result;
   };
+
+  Mold.castAppend = function castAppend(target, mold, arg) {
+    var temp = target.ownerDocument.createElement("DIV");
+    var result = Mold.cast(temp, mold, arg);
+    while (temp.firstChild)
+      target.appendChild(temp.firstChild);
+    return result;
+  }
 })();

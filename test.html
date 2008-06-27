@@ -6,11 +6,11 @@
       window.onload = function() {
         var test = "<p><?r this.style.color = \"blue\";?><?label goo?><?t 5 + 5?> ... \"<?if $arg == 5?>bye<?/if?>\"</p>\n<ul><?for x [5, \n6, 7]?><li><?event click alert(x);?><?l li?><?t x?></li><?/for?></ul>";
         window.mold = Mold.bake(test);
-        window.goo = Mold.cast(document.getElementById('target'), mold, 5);
+        window.goo = Mold.castAppend(document.getElementById('target'), mold, 5);
       };
 
     </script>
     (test)
-    <div id='target'>[]</div>
+    <div id='target'>[]<br/></div>
   </body>
 </html>
