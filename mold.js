@@ -167,7 +167,9 @@ var Mold = {};
     for (var i = 0; i < array.length; i++) {
       var varTag = array[i], match = varTag.className.match(/^__mold (\d+)$/);
       if (match) {
-        snippets[match[1]].call(varTag.previousSibling || varTag.parentNode);
+        var prev = varTag.previousSibling;
+        while (prev && prev.nodeType == 3) prev = prev.previousSibling;
+        snippets[match[1]].call(prev || varTag.parentNode);
         varTag.parentNode.removeChild(varTag);
       }
     }
