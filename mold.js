@@ -37,13 +37,22 @@ var Mold = {};
   };
 
   var labels;
-  Mold.setLabel = function setLabel(name, inArray) {
+  Mold.setLabel = function setLabel(name) {
     return function() {
       if (!labels) labels = {};
-      if (inArray) (labels[name] || (labels[name] = [])).push(this);
-      else labels[name] = this;
+
+      if (forDepth > 0) {
+        var array = labels[name] || (labels[name] = []);
+        if (array.push) array.push(this);
+      }
+      else {
+        labels[name] = this;
+      }
     };
   };
+
+  Mold.forDepth = 0;
+  var casting = false;
 
   var HTMLspecial = {"<": "&lt;", ">": "&gt;", "&": "&amp;", "\"": "&quot;"};
   Mold.escapeHTML = function escapeHTML(text) {
@@ -55,16 +64,15 @@ var Mold = {};
     return String(text).replace(/[\"\\\f\b\n\t\r\v]/g, function(ch) {return JSspecial[ch];});
   }
 
+  Mold.forEach = function forEach(array, f) {
+    for (var i = 0; i < array.length; i++)
+      f(array[i]);
+  }
+
   Mold.bake = function bake(template) {
     var parts = splitTemplate(template);
     var func = ["[function(input){\nvar __out = [];\n"];
     var stack = [];
-
-    function inLoop() {
-      for (var i = 0; i < stack.length; i++)
-        if (stack[i] == "for") return true;
-      return false;
-    }
 
     while (parts.length) {
       var cur = parts.shift();
@@ -105,11 +113,11 @@ var Mold = {};
         stack.push("for");
         var match = cur.args.match(/^([\w\$_]+) ((?:\n|.)+)$/);
         if (!match) throw new Error("Malformed arguments to 'for' form in template -- expected variable name followed by expression.");
-        func.push("forEach(" + match[2] + ", function(" + match[1] + ") {\n");
+        func.push("Mold.forDepth++;\nMold.forEach(" + match[2] + ", function(" + match[1] + ") {\n");
         break;
       case "/for":
         if (stack.pop() != "for") throw new Error("'/for' without matching 'for' in template.");
-        func.push("});\n");
+        func.push("});\nMold.forDepth--;\n");
         break;
 
       case "event":
@@ -123,7 +131,7 @@ var Mold = {};
         break;
       case "label": case "l":
         func.push("__out.push(\"<var class=\\\"__mold \" + Mold.addSnippet(Mold.setLabel(\"" + Mold.escapeString(cur.args) +
-                  "\", " + inLoop() + ")) + \"\\\"></var>\");\n");
+                  "\")) + \"\\\"></var>\");\n");
         break;
 
       default:
@@ -138,7 +146,9 @@ var Mold = {};
   };
 
   Mold.cast = function cast(target, mold, data) {
-    snippets = [], snippet = 0, labels = null;
+    if (casting) throw new Error("Mold.cast must not be called recursively.");
+
+    snippets = [], snippet = 0, labels = null, forDepth = 0, casting = true;
     target.innerHTML = mold(data);
     var varTags = target.getElementsByTagName("VAR"), array = [];
     // Copy tags into array -- FF modifies the varTags collection when you delete nodes in it.
@@ -154,6 +164,7 @@ var Mold = {};
 
     var result = labels;
     labels = snippets = null;
+    casting = false;
     return result;
   };
 })();

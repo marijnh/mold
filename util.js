@@ -39,8 +39,3 @@ function addEventHandler(node, type, handler) {
 function removeEventHandler(handler) {
   handler();
 }
-
-function forEach(array, f) {
-  for (var i = 0; i < array.length; i++)
-    f(array[i]);
-}
