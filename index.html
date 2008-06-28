@@ -91,10 +91,12 @@
     <pre class="code">
 &lt;div class="choice"&gt;
   &lt;h2&gt;Choose one:&lt;/h2&gt;
-  &lt;ol class="option"&gt;
+  &lt;?do var odd = false;?&gt;
+  &lt;ol&gt;
+    &lt;?label choiceList?&gt;
     &lt;?for choice $arg?&gt;
-      &lt;li&gt;
-        &lt;?event click handleChoice(choice)?&gt;
+      &lt;li class="option [?text (odd = !odd) ? "odd" : "even"?]"&gt;
+        &lt;?event click handleChoice(choice);?&gt;
         &lt;?if typeof choice == "string"?&gt;
           &lt;strong&gt;&lt;?text choice?&gt;&lt;/strong&gt;
         &lt;?else?&gt;
