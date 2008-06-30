@@ -274,9 +274,7 @@
     for example, you might do this:</p>
 
     <pre class="code">
-Mold.attachEvent = function(node, eventName, func) {
-  node.observe(eventName, func);
-};</pre>
+Mold.attachEvent = Event.observe;</pre>
 
     <p>There is also <code>Mold.escapeHTML</code>, which HTML-escapes
     the characters '<code>&lt;&gt;&quot;&amp;</code>'. This is not
