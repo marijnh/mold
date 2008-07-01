@@ -203,16 +203,16 @@
       determined as follows (the same applies for the instructions
       after this): When it sits before all non-text nodes in the
       enclosing node, it applies to the enclosing node. Otherwise, it
-      applies to the first non-text node before it. Directly after
-      <code>event</code>, an event type should be given (without
+      applies to the first non-text node before it. Directly after the
+      word <code>event</code>, an event type should be given (without
       '<code>on</code>', so something like '<code>click</code>' or
-      '<code>submit</code>'. After that the handler body follows,
-      which may refer to the <code>event</code> variable to get the
+      '<code>submit</code>'). After that the handler body follows,
+      which may refer to the <code>$event</code> variable to get the
       event object.</dd>
 
       <dt><code>run</code> (or <code>r</code>)</dt>
       <dd>This works like <code>do</code>, except that the
-      <code>this</code> variable refers to the nearest HTML node.
+      <code>$node</code> variable refers to the nearest HTML node.
       Having access to this node means that it has to be run 'out of
       line', after the template has been expanded, so variables
       defined in this instruction are not visible to the rest of the

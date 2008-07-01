@@ -38,15 +38,15 @@ var Mold = {};
 
   var labels;
   Mold.setLabel = function setLabel(name) {
-    return function() {
+    return function(node) {
       if (!labels) labels = {};
 
       if (forDepth > 0) {
         var array = labels[name] || (labels[name] = []);
-        if (array.push) array.push(this);
+        if (array.push) array.push(node);
       }
       else {
-        labels[name] = this;
+        labels[name] = node;
       }
     };
   };
@@ -133,11 +133,11 @@ var Mold = {};
       case "event":
         var match = cur.args.match(/^(\w+) ((?:\n|.)+)$/);
         if (!match) throw new Error("Malformed arguments to 'event' form in template -- expected event name followed by handler body.");
-        func.push("__out.push(\"<var class=\\\"__mold \" + Mold.addSnippet(function(){_attachEvent(this, \"" + 
-                  match[1] + "\", function(event) {\n" + match[2] + "\n});}) + \"\\\"></var>\");\n");
+        func.push("__out.push(\"<var class=\\\"__mold \" + Mold.addSnippet(function(__node){_attachEvent(__node, \"" + 
+                  match[1] + "\", function($event) {\n" + match[2] + "\n});}) + \"\\\"></var>\");\n");
         break;
       case "run": case "r":
-        func.push("__out.push(\"<var class=\\\"__mold \" + Mold.addSnippet(function(){" + cur.args + "}) + \"\\\"></var>\");\n");
+        func.push("__out.push(\"<var class=\\\"__mold \" + Mold.addSnippet(function($node){" + cur.args + "}) + \"\\\"></var>\");\n");
         break;
       case "label": case "l":
         func.push("__out.push(\"<var class=\\\"__mold \" + Mold.addSnippet(Mold.setLabel(\"" + escapeString(cur.args) +
@@ -169,7 +169,7 @@ var Mold = {};
       if (match) {
         var prev = varTag.previousSibling;
         while (prev && prev.nodeType == 3) prev = prev.previousSibling;
-        snippets[match[1]].call(prev || varTag.parentNode);
+        snippets[match[1]](prev || varTag.parentNode);
         varTag.parentNode.removeChild(varTag);
       }
     }
