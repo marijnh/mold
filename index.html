@@ -256,6 +256,15 @@
     href="#cast"><code>cast</code></a>, but appends the new nodes to
     the target node, instead of replacing its content.</p>
 
+    <p id="define">It is possible to define custom instructions with
+    <code>Mold.define</code>, which accepts a string (the instruction
+    name) and a mold-like function (takes one argument, returns a
+    string) and defines a new instruction that takes an (optional)
+    expression as its argument and expands to the result of calling
+    the given function with the value of this expression. This is
+    basically a way to define pleasant shortcuts for things like
+    <code>&lt;?html myTemplate("something")?&gt;</code>.</p>
+
     <p>There are a few more properties of the <code>Mold</code> object
     that can be useful. The most important one is
     <code>Mold.attachEvent</code>. By default, Mold uses a very

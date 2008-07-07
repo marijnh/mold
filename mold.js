@@ -79,9 +79,19 @@ var Mold = {};
       f(array[i]);
   }
 
+  var custom = {};
+  Mold.define = function(name, func) {
+    custom[name] = func;
+  }
+  Mold.dispatchCustom = function(name, arg, output) {
+    if (!custom.hasOwnProperty(name))
+      throw new Error("Unrecognised template command: '" + name + "'.");
+    output.push(custom[name](arg, output));
+  }
+
   Mold.bake = function bake(template) {
     var parts = splitTemplate(template);
-    var func = ["[function($arg){\nvar __out = [];\n"];
+    var func = ["[function($arg, __output){\nvar __out = __output || [];\n"];
     var stack = [];
 
     while (parts.length) {
@@ -145,12 +155,12 @@ var Mold = {};
         break;
 
       default:
-        throw new Error("Unrecognised template command: '" + cur.command + "'.");
+        func.push("Mold.dispatchCustom(\"" + escapeString(cur.command) + "\", " + cur.args + ", __out);\n");
       }
     }
     if (stack.length) throw new Error("Unclosed blocks in template (" + stack.join() + ").");
 
-    func.push("return __out.join(\"\");\n}]");
+    func.push("return __output ? \"\" : __out.join(\"\");\n}]");
     // The brackets are there to work around some weird IE6 behaviour.
     return window.eval(func.join(""))[0];
   };
