@@ -187,11 +187,15 @@
       instructions.</dd>
 
       <dt><code>for</code></dt>
-      <dd>Should be given two arguments, a variable name and an
-      expression evaluating to an array-like value. The template
-      fragment following it will be repeated once for every element in
-      the array, with the named variable bound to the current
-      element (properly closed over, not reassigned).</dd>
+      <dd>Used to loop over arrays or objects. Can follow several
+      forms: <code>&lt;?for x [expr]?&gt;</code> loops over the array
+      created by the given expression. <code>&lt;?for key, value in
+      [expr]?&gt;</code> loops over an object. The <code>value</code>
+      variable in the second form can be omitted when not needed. The
+      template fragment in the loop will be repeated once for every
+      element in the collection, with the named variables bound to the
+      relevant values (bound by function call, not reassigned, so they
+      can be closed over).</dd>
 
       <dt><code>for.</code></dt>
       <dd>Closes a <code>for</code> block.</dd>
@@ -217,8 +221,7 @@
       line', after the template has been expanded, so variables
       defined in this instruction are not visible to the rest of the
       template code. Variables defined during template expansion, on
-      the other hand, <em>are</em> visible in this block (closed
-      over).</dd>
+      the other hand, <em>are</em> visible in this block.</dd>
 
       <dt><code>label</code> (or <code>l</code>)</dt>
       <dd>This is used to get a reference to the nearest (as in

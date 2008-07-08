@@ -6,7 +6,8 @@
       window.onload = function() {
         Mold.define("str", Mold.bake("<strong><?t $arg?></strong>"));
         var test = "<p><?r $node.style.color = \"blue\";?><?label goo?><?t 5 + 5?> ... \"<?if $arg == 5?><?str \"bye\"?><?if.?>\"</p>\n" +
-          "<ul><?for x [5, \n6, 7]?><li><?event click alert(x);?><?l li?><?t x?></li><?for.?></ul>";
+          "<ul><?for x [5, \n6, 7]?><li><?event click alert(x);?><?l li?><?t x?></li><?for.?></ul>\n" +
+          "<?for n, v in {a: 1, b: 2, c: 3}?><div><?t n?> = <i><?t v?></div><?for.?>";
         window.mold = Mold.bake(test);
         window.vars = Mold.cast(document.getElementById('target'), mold, 5);
         if (window.vars.goo.nodeName != "P") alert("Label failed.");

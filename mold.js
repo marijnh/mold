@@ -78,6 +78,13 @@ var Mold = {};
     for (var i = 0; i < array.length; i++)
       f(array[i]);
   }
+  var hop = Object.prototype.hasOwnProperty;
+  Mold.forEachIn = function forEachIn(obj, f) {
+    for (var n in obj) {
+      if (hop.call(obj, n))
+        f(n, obj[n]);
+    }
+  }
 
   var custom = {};
   Mold.define = function(name, func) {
@@ -92,7 +99,7 @@ var Mold = {};
   Mold.bake = function bake(template) {
     var parts = splitTemplate(template);
     var func = ["[function($arg, __output){\nvar __out = __output || [];\n"];
-    var stack = [];
+    var stack = [], match;
 
     while (parts.length) {
       var cur = parts.shift();
@@ -131,9 +138,13 @@ var Mold = {};
 
       case "for":
         stack.push("for");
-        var match = cur.args.match(/^([\w\$_]+) ((?:\n|.)+)$/);
-        if (!match) throw new Error("Malformed arguments to 'for' form in template -- expected variable name followed by expression.");
-        func.push("Mold.forDepth++;\nMold.forEach(" + match[2] + ", function(" + match[1] + ") {\n");
+        if (match = cur.args.match(/^([\w\$_]+)(?:,\s*([\w\$_]+))?\s+in\s+((?:\n|.)+)$/))
+          func.push("Mold.forDepth++;\nMold.forEachIn(" + match[3] + ", function(" + match[1] +
+                    (match[2] ? ", " + match[2] : "") + ") {\n");
+        else if (match = cur.args.match(/^([\w\$_]+)\s+((?:\n|.)+)$/))
+          func.push("Mold.forDepth++;\nMold.forEach(" + match[2] + ", function(" + match[1] + ") {\n");
+        else
+          throw new Error("Malformed arguments to 'for' form in template -- expected variable name followed by expression.");
         break;
       case "for.":
         if (stack.pop() != "for") throw new Error("'for.' without matching 'for' in template.");
@@ -141,10 +152,11 @@ var Mold = {};
         break;
 
       case "event":
-        var match = cur.args.match(/^(\w+) ((?:\n|.)+)$/);
-        if (!match) throw new Error("Malformed arguments to 'event' form in template -- expected event name followed by handler body.");
-        func.push("__out.push(\"<var class=\\\"__mold \" + Mold.addSnippet(function(__node){_attachEvent(__node, \"" + 
-                  match[1] + "\", function($event) {\n" + match[2] + "\n});}) + \"\\\"></var>\");\n");
+        if (match = cur.args.match(/^(\w+)\s+((?:\n|.)+)$/))
+          func.push("__out.push(\"<var class=\\\"__mold \" + Mold.addSnippet(function(__node){_attachEvent(__node, \"" + 
+                    match[1] + "\", function($event) {\n" + match[2] + "\n});}) + \"\\\"></var>\");\n");
+        else
+          throw new Error("Malformed arguments to 'event' form in template -- expected event name followed by handler body.");
         break;
       case "run": case "r":
         func.push("__out.push(\"<var class=\\\"__mold \" + Mold.addSnippet(function($node){" + cur.args + "}) + \"\\\"></var>\");\n");
