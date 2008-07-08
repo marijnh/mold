@@ -98,7 +98,7 @@ var Mold = {};
 
   Mold.bake = function bake(template) {
     var parts = splitTemplate(template);
-    var func = ["[function($arg, __output){\nvar __out = __output || [];\n"];
+    var func = ["[function template($arg, __output){\nvar __out = __output || [];\n"];
     var stack = [], match;
 
     while (parts.length) {
