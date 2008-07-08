@@ -101,9 +101,9 @@
           &lt;strong&gt;&lt;?text choice?&gt;&lt;/strong&gt;
         &lt;?else?&gt;
           &lt;?html choice.render()?&gt;
-        &lt;?/if?&gt;
+        &lt;?if.?&gt;
       &lt;/li&gt;
-    &lt;?/for?&gt;
+    &lt;?for.?&gt;
   &lt;/ol&gt;
 &lt;/div&gt;</pre>
 
@@ -167,7 +167,7 @@
       <dt><code>if</code></dt>
       <dd>Should be given a JavaScript expression. If this expression
       evaluates to false, the block (up to the matching
-      <code>/if</code>, <code>elif</code>, or <code>else</code>) will
+      <code>if.</code>, <code>elif</code>, or <code>else</code>) will
       not be evaluated/expanded.</dd>
 
       <dt><code>elif</code></dt>
@@ -181,7 +181,7 @@
       <code>elif</code>s. The block following <code>else</code> is
       expanded only if none of the previous conditions fired.</dd>
 
-      <dt><code>/if</code></dt>
+      <dt><code>if.</code></dt>
       <dd>Closes a chain of
       <code>if</code>/<code>elif</code>/<code>else</code>
       instructions.</dd>
@@ -193,7 +193,7 @@
       the array, with the named variable bound to the current
       element (properly closed over, not reassigned).</dd>
 
-      <dt><code>/for</code></dt>
+      <dt><code>for.</code></dt>
       <dd>Closes a <code>for</code> block.</dd>
 
       <dt><code>event</code></dt>
