@@ -76,13 +76,15 @@ var Mold = {};
 
   Mold.forEach = function forEach(array, f) {
     for (var i = 0; i < array.length; i++)
-      f(array[i]);
+      f(array[i], i == 0);
   }
   var hop = Object.prototype.hasOwnProperty;
   Mold.forEachIn = function forEachIn(obj, f) {
+    var first = true;
     for (var n in obj) {
       if (hop.call(obj, n))
-        f(n, obj[n]);
+        f(n, obj[n], first);
+      first = false;
     }
   }
 
@@ -139,10 +141,10 @@ var Mold = {};
       case "for":
         stack.push("for");
         if (match = cur.args.match(/^([\w\$_]+)(?:,\s*([\w\$_]+))?\s+in\s+((?:\n|.)+)$/))
-          func.push("Mold.forDepth++;\nMold.forEachIn(" + match[3] + ", function(" + match[1] +
-                    (match[2] ? ", " + match[2] : "") + ") {\n");
+          func.push("Mold.forDepth++;\nMold.forEachIn(" + match[3] + ", function(" + match[1] + ", " +
+                    (match[2] || "$dummy") + ", $first) {\n");
         else if (match = cur.args.match(/^([\w\$_]+)\s+((?:\n|.)+)$/))
-          func.push("Mold.forDepth++;\nMold.forEach(" + match[2] + ", function(" + match[1] + ") {\n");
+          func.push("Mold.forDepth++;\nMold.forEach(" + match[2] + ", function(" + match[1] + ", $first) {\n");
         else
           throw new Error("Malformed arguments to 'for' form in template -- expected variable name followed by expression.");
         break;
