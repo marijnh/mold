@@ -1,5 +1,11 @@
 var Mold = {};
 
+// Evaluate something in a relatively clean environment, to prevent
+// name clashing.
+Mold.cleanEval = function(__string) {
+  return window.eval(__string);
+};
+
 (function() {
   function splitTemplate(template) {
     var parts = [];
@@ -65,14 +71,15 @@ var Mold = {};
   }
 
   Mold.attachEvent = null;
-  function _attachEvent(node, eventName, func) {
+  Mold._attachEvent = function(node, eventName, func) {
+    var wrapped = function(event) {func(event || window.event, node);};
     if (Mold.attachEvent)
-      Mold.attachEvent(node, eventName, func);
+      Mold.attachEvent(node, eventName, wrapped);
     else if (node.addEventListener)
-      node.addEventListener(eventName, func, false);
+      node.addEventListener(eventName, wrapped, false);
     else
-      node.attachEvent("on" + eventName, function(event){func(event || window.event);});
-  }
+      node.attachEvent("on" + eventName, wrapped);
+  };
 
   Mold.forEach = function forEach(array, f) {
     for (var i = 0; i < array.length; i++)
@@ -100,7 +107,7 @@ var Mold = {};
 
   Mold.bake = function bake(template) {
     var parts = splitTemplate(template);
-    var func = ["[function template($arg, __output){\nvar __out = __output || [];\n"];
+    var func = ["[function templateFunction($arg, __output){\nvar __out = __output || [];\n"];
     var stack = [], match;
 
     while (parts.length) {
@@ -155,8 +162,8 @@ var Mold = {};
 
       case "event":
         if (match = cur.args.match(/^(\w+)\s+((?:\n|.)+)$/))
-          func.push("__out.push(\"<var class=\\\"__mold \" + Mold.addSnippet(function(__node){_attachEvent(__node, \"" + 
-                    match[1] + "\", function($event) {\n" + match[2] + "\n});}) + \"\\\"></var>\");\n");
+          func.push("__out.push(\"<var class=\\\"__mold \" + Mold.addSnippet(function(__node){Mold._attachEvent(__node, \"" + 
+                    match[1] + "\", function($event, $node) {\n" + match[2] + "\n});}) + \"\\\"></var>\");\n");
         else
           throw new Error("Malformed arguments to 'event' form in template -- expected event name followed by handler body.");
         break;
@@ -176,7 +183,7 @@ var Mold = {};
 
     func.push("return __output ? \"\" : __out.join(\"\");\n}]");
     // The brackets are there to work around some weird IE6 behaviour.
-    return window.eval(func.join(""))[0];
+    return Mold.cleanEval(func.join(""))[0];
   };
 
   Mold.cast = function cast(target, mold, arg) {
