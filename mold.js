@@ -63,7 +63,7 @@ Mold.cleanEval = function(__string) {
   var HTMLspecial = {"<": "&lt;", ">": "&gt;", "&": "&amp;", "\"": "&quot;"};
   Mold.escapeHTML = function escapeHTML(text) {
     return String(text).replace(/[<>&\"]/g, function(ch) {return HTMLspecial[ch];});
-  }
+  };
   var JSspecial = {"\"": "\\\"", "\\": "\\\\", "\f": "\\f", "\b": "\\b",
                    "\n": "\\n", "\t": "\\t", "\r": "\\r", "\v": "\\v"};
   function escapeString(text) {
@@ -84,7 +84,7 @@ Mold.cleanEval = function(__string) {
   Mold.forEach = function forEach(array, f) {
     for (var i = 0; i < array.length; i++)
       f(array[i], i == 0);
-  }
+  };
   var hop = Object.prototype.hasOwnProperty;
   Mold.forEachIn = function forEachIn(obj, f) {
     var first = true;
@@ -93,17 +93,17 @@ Mold.cleanEval = function(__string) {
         f(n, obj[n], first);
       first = false;
     }
-  }
+  };
 
   var custom = {};
   Mold.define = function(name, func) {
     custom[name] = func;
-  }
+  };
   Mold.dispatchCustom = function(name, arg, output) {
     if (!custom.hasOwnProperty(name))
       throw new Error("Unrecognised template command: '" + name + "'.");
     output.push(custom[name](arg, output));
-  }
+  };
 
   Mold.bake = function bake(template) {
     var parts = splitTemplate(template);
@@ -217,5 +217,5 @@ Mold.cleanEval = function(__string) {
     while (temp.firstChild)
       target.appendChild(temp.firstChild);
     return result;
-  }
+  };
 })();
