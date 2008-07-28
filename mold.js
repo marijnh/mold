@@ -60,7 +60,7 @@ Mold.cleanEval = function(__string) {
   Mold.forDepth = 0;
   var casting = false;
 
-  var HTMLspecial = {"<": "&lt;", ">": "&gt;", "&": "&amp;", "\"": "&quot;"};
+  var HTMLspecial = {"<": "&lt;", "&": "&amp;", "\"": "&quot;"};
   Mold.escapeHTML = function escapeHTML(text) {
     return String(text).replace(/[<>&\"]/g, function(ch) {return HTMLspecial[ch];});
   };
@@ -73,6 +73,12 @@ Mold.cleanEval = function(__string) {
   Mold.attachEvent = null;
   Mold._attachEvent = function(node, eventName, func) {
     var wrapped = function(event) {func(event || window.event, node);};
+    if (eventName == "enter") {
+      var origFunc = func;
+      func = function(event, node){if (event.keyCode == 13) origFunc(event, node);};
+      eventName = "keydown";
+    }
+
     if (Mold.attachEvent)
       Mold.attachEvent(node, eventName, wrapped);
     else if (node.addEventListener)
