@@ -62,7 +62,7 @@ Mold.cleanEval = function(__string) {
 
   var HTMLspecial = {"<": "&lt;", "&": "&amp;", "\"": "&quot;"};
   Mold.escapeHTML = function escapeHTML(text) {
-    return String(text).replace(/[<>&\"]/g, function(ch) {return HTMLspecial[ch];});
+    return String(text).replace(/[<&\"]/g, function(ch) {return HTMLspecial[ch];});
   };
   var JSspecial = {"\"": "\\\"", "\\": "\\\\", "\f": "\\f", "\b": "\\b",
                    "\n": "\\n", "\t": "\\t", "\r": "\\r", "\v": "\\v"};
