@@ -75,7 +75,7 @@ Mold.cleanEval = function(__string) {
     var wrapped = function(event) {func(event || window.event, node);};
     if (eventName == "enter") {
       var origFunc = func;
-      func = function(event, node){if (event.keyCode == 13) origFunc(event, node);};
+      func = function(event, node){if ((event.charCode || event.keyCode) == 13) origFunc(event, node);};
       eventName = "keydown";
     }
 
