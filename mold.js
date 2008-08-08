@@ -182,7 +182,7 @@ Mold.cleanEval = function(__string) {
         break;
 
       default:
-        func.push("Mold.dispatchCustom(\"" + escapeString(cur.command) + "\", " + cur.args + ", __out);\n");
+        func.push("Mold.dispatchCustom(\"" + escapeString(cur.command) + "\", " + (/^\s*$/.test(cur.args) ? "null" : cur.args) + ", __out);\n");
       }
     }
     if (stack.length) throw new Error("Unclosed blocks in template (" + stack.join() + ").");
