@@ -196,9 +196,8 @@
       template fragment in the loop will be repeated once for every
       element in the collection, with the named variables bound to the
       relevant values (bound by function call, not reassigned, so they
-      can be closed over). The variable <code>$first</code> will be
-      <code>true</code> on the first iteration, and <code>false</code>
-      after that.</dd>
+      can be closed over). The variable <code>$i</code>, inside the
+      loop body, refers to the current index, starting at 0.</dd>
 
       <dt><code>for.</code></dt>
       <dd>Closes a <code>for</code> block.</dd>
