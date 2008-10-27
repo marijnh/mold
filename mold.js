@@ -195,24 +195,28 @@ Mold.cleanEval = function(__string) {
     if (casting) throw new Error("Mold.cast must not be called recursively.");
 
     snippets = [], snippet = 0, labels = null, forDepth = 0, casting = true;
-    target.innerHTML = mold(arg);
-    var varTags = target.getElementsByTagName("VAR"), array = [];
-    // Copy tags into array -- FF modifies the varTags collection when you delete nodes in it.
-    for (var i = 0; i < varTags.length; i++)
-      array.push(varTags[i]);
-    for (var i = 0; i < array.length; i++) {
-      var varTag = array[i], match = varTag.className.match(/^__mold (\d+)$/);
-      if (match) {
-        var prev = varTag.previousSibling;
-        while (prev && prev.nodeType == 3) prev = prev.previousSibling;
-        snippets[match[1]](prev || varTag.parentNode);
-        varTag.parentNode.removeChild(varTag);
+    try {
+      target.innerHTML = mold(arg);
+      var varTags = target.getElementsByTagName("VAR"), array = [];
+      // Copy tags into array -- FF modifies the varTags collection when you delete nodes in it.
+      for (var i = 0; i < varTags.length; i++)
+        array.push(varTags[i]);
+      for (var i = 0; i < array.length; i++) {
+        var varTag = array[i], match = varTag.className.match(/^__mold (\d+)$/);
+        if (match) {
+          var prev = varTag.previousSibling;
+          while (prev && prev.nodeType == 3) prev = prev.previousSibling;
+          snippets[match[1]](prev || varTag.parentNode);
+          varTag.parentNode.removeChild(varTag);
+        }
       }
-    }
 
-    var result = labels;
-    labels = snippets = null;
-    casting = false;
+      var result = labels;
+    }
+    finally {
+      labels = snippets = null;
+      casting = false;
+    }
     return result;
   };
 
