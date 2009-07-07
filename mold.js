@@ -24,7 +24,7 @@ Mold.cleanEval = function(__string) {
         addString(template.slice(0, open));
         var close = template.indexOf("?" + (template.charAt(open) == "<" ? ">" : "]"), open + 2);
         if (close == -1) throw new Error("'<?' without matching '?>' in template.");
-        var content = template.slice(open + 2, close), match = content.match(/^([\w\.]+)(?:\s+((?:\n|.)+))?$/);
+        var content = template.slice(open + 2, close), match = content.match(/^([\w\.]+)(?:\s+((?:\r|\n|.)+))?$/);
         if (!match) throw new Error("Template command ('" + content + "') does not follow 'command [arguments]' format.");
         parts.push({command: match[1], args: match[2]});
         template = template.slice(close + 2);
@@ -152,10 +152,10 @@ Mold.cleanEval = function(__string) {
 
       case "for":
         stack.push("for");
-        if (match = cur.args.match(/^([\w\$_]+)(?:,\s*([\w\$_]+))?\s+in\s+((?:\n|.)+)$/))
+        if (match = cur.args.match(/^([\w\$_]+)(?:,\s*([\w\$_]+))?\s+in\s+((?:\r|\n|.)+)$/))
           func.push("Mold.forDepth++;\nMold.forEachIn(" + match[3] + ", function(" + match[1] + ", " +
                     (match[2] || "$dummy") + ", $i) {\n");
-        else if (match = cur.args.match(/^([\w\$_]+)\s+((?:\n|.)+)$/))
+        else if (match = cur.args.match(/^([\w\$_]+)\s+((?:\r|\n|.)+)$/))
           func.push("Mold.forDepth++;\nMold.forEach(" + match[2] + ", function(" + match[1] + ", $i) {\n");
         else
           throw new Error("Malformed arguments to 'for' form in template -- expected variable name followed by expression.");
@@ -166,7 +166,7 @@ Mold.cleanEval = function(__string) {
         break;
 
       case "event":
-        if (match = cur.args.match(/^(\w+)\s+((?:\n|.)+)$/))
+        if (match = cur.args.match(/^(\w+)\s+((?:\r|\n|.)+)$/))
           func.push("__out.push(\"<var class=\\\"__mold \" + Mold.addSnippet(function(__node){Mold._attachEvent(__node, \"" + 
                     match[1] + "\", function($event, $node) {\n" + match[2] + "\n});}) + \"\\\"></var>\");\n");
         else
