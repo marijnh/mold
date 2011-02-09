@@ -179,6 +179,11 @@ Mold.cleanEval = function(__string) {
         func.push("__out.push(\"<var class=\\\"__mold \" + Mold.addSnippet(Mold.setLabel(\"" + escapeString(cur.args) +
                   "\")) + \"\\\"></var>\");\n");
         break;
+      case "call":
+        var f = cur.args, arr = f.indexOf("->"), arg = "null";
+        if (arr != -1) {arg = f.slice(arr + 2); f = f.slice(0, arr);}
+        func.push(f + "(" + arg + ", __out);");
+        break;
 
       default:
         func.push("Mold.dispatchCustom(\"" + escapeString(cur.command) + "\", " + (/^\s*$/.test(cur.args) ? "null" : cur.args) + ", __out);\n");
