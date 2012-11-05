@@ -24,7 +24,7 @@ Mold.cleanEval = function(__string) {
         addString(template.slice(0, open));
         var close = template.indexOf("?" + (template.charAt(open) == "<" ? ">" : "]"), open + 2);
         if (close == -1) throw new Error("'<?' without matching '?>' in template.");
-        var content = template.slice(open + 2, close), match = content.match(/^([\w\.]+)(?:\s+((?:\r|\n|.)+))?$/);
+        var content = template.slice(open + 2, close), match = content.match(/^([\w\/]+)(?:\s+((?:\r|\n|.)+))?$/);
         if (!match) throw new Error("Template command ('" + content + "') does not follow 'command [arguments]' format.");
         parts.push({command: match[1], args: match[2]});
         template = template.slice(close + 2);
@@ -145,8 +145,8 @@ Mold.cleanEval = function(__string) {
         if (stack[stack.length - 1] != "if") throw new Error("'else' without matching 'if' in template.");
         func.push("} else {\n");
         break;
-      case "if.":
-        if (stack.pop() != "if") throw new Error("'if.' without matching 'if' in template.");
+      case "/if":
+        if (stack.pop() != "if") throw new Error("'/if' without matching 'if' in template.");
         func.push("}\n");
         break;
 
@@ -160,8 +160,8 @@ Mold.cleanEval = function(__string) {
         else
           throw new Error("Malformed arguments to 'for' form in template -- expected variable name followed by expression.");
         break;
-      case "for.":
-        if (stack.pop() != "for") throw new Error("'for.' without matching 'for' in template.");
+      case "/for":
+        if (stack.pop() != "for") throw new Error("'/for' without matching 'for' in template.");
         func.push("});\nMold.forDepth--;\n");
         break;
 
