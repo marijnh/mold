@@ -1,5 +1,5 @@
 {
-    "name": "mold",
+    "name": "mold-template",
     "version":"1.0.0",
     "main": "mold.node.js",
     "description": "Templating system",
