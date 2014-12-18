@@ -1,11 +1,5 @@
 var Mold = {};
 
-// Evaluate something in a relatively clean environment, to prevent
-// name clashing.
-Mold.cleanEval = function(__string) {
-  return window.eval(__string);
-};
-
 (function() {
   function splitTemplate(template) {
     var parts = [];
@@ -193,7 +187,7 @@ Mold.cleanEval = function(__string) {
 
     func.push("return __output ? \"\" : __out.join(\"\");\n}]");
     // The brackets are there to work around some weird IE6 behaviour.
-    return Mold.cleanEval(func.join(""))[0];
+    return (0,eval)(func.join(""))[0];
   };
 
   Mold.cast = function cast(target, mold, arg) {
