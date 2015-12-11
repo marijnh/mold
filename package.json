@@ -1,13 +1,12 @@
 {
     "name": "mold-template",
-    "version":"1.0.0",
-    "main": "mold.node.js",
-    "description": "Templating system",
+    "version":"2.0.0",
+    "main": "mold.js",
+    "description": "Tiny templating tool",
     "license": "MIT",
     "bugs": "https://github.com/marijnh/mold/issues",
     "scripts": {"test": "node ./test.js"},
-    "keywords": ["templating", "client-side"],
-    "homepage": "http://marijnhaverbeke.nl/mold",
+    "keywords": ["templating"],
     "author": "Marijn Haverbeke <marijnh@gmail.com>",
     "repositories": [{"type": "git",
                       "url": "https://github.com/marijnh/mold.git"}]
