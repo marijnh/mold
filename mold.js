@@ -78,7 +78,7 @@ function tokenize(template) {
 
 function compile(template) {
   var tokens = tokenize(template)
-  var code = "function($arg) {\nvar __O = ''\n"
+  var code = "function($in) {\nvar __O = ''\n"
   var stack = [{type: "top", pos: 0}], match
 
   for (var i = 0; i < tokens.length; i++) {
@@ -89,6 +89,12 @@ function compile(template) {
     }
 
     switch (tok.command) {
+    case "in":
+      var parsed = parseInput(tok.args, "$in")
+      if (parsed == null) template.error("Invalid input pattern", tok.pos)
+      code += parsed
+      break
+
     case "text": case "t":
       code += "__O += __M.escapeHTML(" + tok.args + ")\n"
       break
@@ -152,9 +158,21 @@ function compile(template) {
   return code
 }
 
+function parseInput(pattern, input) {
+  var obj = /^\s*\{\s*([\w$]+(?:\s*,\s*[\w$]+)*)\s*\}\s*$/.exec(pattern)
+  if (obj) {
+    var vars = obj[1].split(/\s*,\s*/), out = "var "
+    for (var i = 0; i < vars.length; i++)
+      out += (i ? ", " : "") + vars[i] + " = " + input + "." + vars[i]
+    return out + "\n"
+  } else {
+    return "var " + pattern + " = " + input + "\n"
+  }
+}
+
 function evaluate(code, mold) {
   var ctx = {__mold: mold}
-  var prelude = "var __M = __CTX.__mold;\n";
+  var prelude = "var __M = __CTX.__mold;\n"
   for (var prop in mold.env) if (mold.env.hasOwnProperty(prop)) {
     prelude += "var " + prop + " = __CTX." + prop + "\n"
     ctx[prop] = mold.env[prop]
