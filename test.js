@@ -1,33 +1,33 @@
 var mold = require("./mold"), m = new mold, tests = []
 
-simple("escape", "a <<t $arg>> b", "<&", "a &lt;&amp; b");
-simple("noescape", "a <<h $arg>> b", "<>", "a <> b");
+simple("escape", "a <<t $in>> b", "<&", "a &lt;&amp; b");
+simple("noescape", "a <<h $in>> b", "<>", "a <> b");
 
 simple("array",
-       "a <<for e $arg>>(<<t e>>)<</for>> b", [1, 2, 3],
+       "a <<for e $in>>(<<t e>>)<</for>> b", [1, 2, 3],
        "a (1)(2)(3) b");
 simple("obj",
-       "a <<for p, v in $arg>><<t p>>=<<t v>><</for>> b", {x: 10, y: 20},
+       "a <<for p, v in $in>><<t p>>=<<t v>><</for>> b", {x: 10, y: 20},
        "a x=10y=20 b");
 simple("array_$i",
-       "a <<for e $arg>>(<<t e>>, <<t $i>>)<</for>> b", [1, 2, 3],
+       "a <<for e $in>>(<<t e>>, <<t $i>>)<</for>> b", [1, 2, 3],
        "a (1, 0)(2, 1)(3, 2) b");
 simple("obj_$i",
-       "a <<for p, v in $arg>><<if $i>>, <</if>><<t p>>=<<t v>><</for>> b", {x: 10, y: 20},
+       "a <<for p, v in $in>><<if $i>>, <</if>><<t p>>=<<t v>><</for>> b", {x: 10, y: 20},
        "a x=10, y=20 b");
 
 test("if", function() {
-  var tmpl = m.bake("a <<if $arg>>foo<</if>><<if !$arg>>bar<</if>> b");
+  var tmpl = m.bake("a <<if $in>>foo<</if>><<if !$in>>bar<</if>> b");
   eq(tmpl(true), "a foo b");
   eq(tmpl(false), "a bar b");
 });
 test("else", function() {
-  var tmpl = m.bake("a <<if $arg>>foo<<else>>bar<</if>> b");
+  var tmpl = m.bake("a <<if $in>>foo<<else>>bar<</if>> b");
   eq(tmpl(true), "a foo b");
   eq(tmpl(false), "a bar b");
 });
 test("elif", function() {
-  var tmpl = m.bake("a <<if $arg==1>>foo<<elif $arg==2>>bar<<else>>quux<</if>> b");
+  var tmpl = m.bake("a <<if $in==1>>foo<<elif $in==2>>bar<<else>>quux<</if>> b");
   eq(tmpl(1), "a foo b");
   eq(tmpl(2), "a bar b");
   eq(tmpl(3), "a quux b");
@@ -43,7 +43,7 @@ test("ctx", function() {
 
 test("define", function() {
   m.defs.paren = function(a) {return "(" + a + ")"}
-  m.bake("sub", "[<<t $arg>>]")
+  m.bake("sub", "[<<t $in>>]")
   eq(m.bake("<<paren 10>><<sub 20>>")(), "(10)[20]");
 });
 
