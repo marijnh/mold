@@ -1,4 +1,12 @@
-module.exports = Mold
+(function(mod) {
+  if (typeof exports == "object" && typeof module == "object") // CommonJS
+    module.exports = mod();
+  else if (typeof define == "function" && define.amd) // AMD
+    return define([], mod);
+  else // Plain browser env
+    (this || window).Mold = mod();
+})(function() {
+"use strict";
 
 function Mold(env) {
   this.env = env || {}
@@ -179,3 +187,6 @@ function evaluate(code, mold) {
   }
   return new Function("__CTX", prelude + "return " + code)(ctx)
 }
+
+return Mold
+})
