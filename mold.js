@@ -15,6 +15,9 @@ function Mold(env) {
 
 Mold.prototype.bake = function(name, string) {
   if (string == null) { string = name; name = null }
+  if (typeof string !== "string")
+    throw new TypeError("Mold template must be a string")
+
   var template = new Template(string, name)
   var result = evaluate(compile(template), this)
   if (name) this.defs[name] = result

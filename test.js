@@ -47,6 +47,15 @@ test("define", function() {
   eq(m.bake("<<paren 10>><<sub 20>>")(), "(10)[20]");
 });
 
+test("validate", function() {
+  try {
+    m.bake(Buffer.from("Some content"))
+    throw new Error("Should not run")
+  } catch (err) {
+    eq(err.message, "Mold template must be a string")
+  }
+})
+
 // DRIVER CODE
 
 function Failure(why) {this.message = why;}
