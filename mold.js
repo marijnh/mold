@@ -35,10 +35,11 @@ Mold.prototype.forEachIn = function(obj, f) {
   for (var n in obj) if (hop.call(obj, n)) f(n, obj[n], i++)
 }
 
-Mold.prototype.dispatch = function(name, arg) {
+Mold.prototype.dispatch = function(name) {
   if (!(name in this.defs))
     throw new Error("Unrecognised template command: '" + name + "'.")
-  return this.defs[name](arg)
+  var args = Array.prototype.slice.call(arguments, 1)
+  return this.defs[name].apply(this.defs, args)
 }
 
 
