@@ -43,8 +43,9 @@ test("ctx", function() {
 
 test("define", function() {
   m.defs.paren = function(a) {return "(" + a + ")"}
+  m.defs.sum = function(a, b) {return a + b}
   m.bake("sub", "[<<t $in>>]")
-  eq(m.bake("<<paren 10>><<sub 20>>")(), "(10)[20]");
+  eq(m.bake("<<paren 10>><<sub 20>> <<sum 1, 2>>")(), "(10)[20] 3");
 });
 
 test("validate", function() {
