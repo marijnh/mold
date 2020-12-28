@@ -77,6 +77,7 @@ function tokenize(template) {
       addString(string.slice(pos))
       return parts
     } else {
+      while (string[open + 2] == "<") open++
       addString(string.slice(pos, open))
       var close = string.indexOf(">>", open + 2)
       if (close == -1) template.error("Unclosed template tag", open)

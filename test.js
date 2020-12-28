@@ -15,6 +15,9 @@ simple("array_$i",
 simple("obj_$i",
        "a <<for p, v in $in>><<if $i>>, <</if>><<t p>>=<<t v>><</for>> b", {x: 10, y: 20},
        "a x=10, y=20 b");
+simple("triple-lt",
+       "<<<t \"hi\">>>", null,
+       "<hi>")
 
 test("if", function() {
   var tmpl = m.bake("a <<if $in>>foo<</if>><<if !$in>>bar<</if>> b");
@@ -94,7 +97,7 @@ function runTests() {
     console.log(failures.length + " failure" + (failures.length - 1 ? "s:" : ":"));
     failures.forEach(function(fail) {
       console.log(" " + fail.name + (fail.condition instanceof Failure ? " failed: " : " threw: ") +
-                  fail.condition.stack);
+                  (fail.condition.stack || fail.condition.message));
     });
   }
 }
