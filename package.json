@@ -1,6 +1,6 @@
 {
     "name": "mold-template",
-    "version":"2.0.1",
+    "version":"2.0.2",
     "main": "mold.js",
     "description": "Tiny templating tool",
     "license": "MIT",
