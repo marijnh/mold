@@ -7,7 +7,7 @@
     "bugs": "https://github.com/marijnh/mold/issues",
     "scripts": {"test": "node ./test.js"},
     "keywords": ["templating"],
-    "author": "Marijn Haverbeke <marijnh@gmail.com>",
+    "author": "Marijn Haverbeke <marijn@haverbeke.berlin>",
     "repositories": [{"type": "git",
                       "url": "https://github.com/marijnh/mold.git"}]
 }
