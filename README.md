@@ -1,3 +1,5 @@
+**This repository has moved to https://code.haverbeke.berlin/marijn/mold**
+
 # Mold templating library
 
 Mold is a minimalist templating library that compiles strings
